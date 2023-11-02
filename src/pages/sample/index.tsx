@@ -18,10 +18,6 @@ export default function Sample() {
     const eventFunction = function (event: PopStateEvent) {
       const historyStep = extractStepValueFromString(event.state.url);
       if (historyStep == null) return;
-      console.info('--- popstate ---');
-      console.info(event.state);
-      console.log(`step: ${step}`);
-      console.log(`historyStep: ${historyStep}`);
       if (Number(historyStep) !== step)
         router.replace({ pathname: path, query: { step: historyStep } }, path);
     };
@@ -85,6 +81,11 @@ const Card: React.FC<{ step: number }> = ({ step }) => {
   return (
     <div className={`flex w-full flex-col gap-4 bg-red-200 p-10`}>
       <p>{step}の要素</p>
+      <p>
+        URL
+        <br />
+        {`${router.asPath}?step=${router.query['step']}`}
+      </p>
       <div className='flex gap-4'>
         <button
           className={`w-1/2 rounded-md ${
@@ -107,17 +108,14 @@ const Card: React.FC<{ step: number }> = ({ step }) => {
 };
 
 function extractStepValueFromString(input: string): string | null {
-  // 入力文字列から "step=" の部分を検索
   const stepIndex = input.indexOf('step=');
   if (stepIndex !== -1) {
-    // "step=" が見つかった場合、その後に続く数字部分を取得
-    const stepSubstring = input.slice(stepIndex + 5); // "step=".length === 5
+    const stepSubstring = input.slice(stepIndex + 5);
     const stepValue = parseInt(stepSubstring, 10);
     if (!isNaN(stepValue)) {
       return String(stepValue);
     }
   }
 
-  // "step=" が見つからないか、数値に変換できない場合は null を返す
   return null;
 }
